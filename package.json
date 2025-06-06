@@ -21,9 +21,11 @@
   "homepage": "https://github.com/BesedinaSofia/nodejs-hw-mongodb#readme",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "mongoose": "^8.15.1",
-    "pino": "^9.7.0"
+    "pino": "^9.7.0",
+    "pino-http": "^10.5.0"
   },
   "devDependencies": {
     "eslint": "^9.28.0",
