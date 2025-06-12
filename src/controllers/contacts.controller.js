@@ -44,7 +44,7 @@
 //   res.status(204).send();
 // };
 
-import * as contactsService from "../services/contacts.js";
+import * as contactsService from "../services/contacts.service";
 import createError from "http-errors";
 
 export const getAllContacts = async (req, res) => {
