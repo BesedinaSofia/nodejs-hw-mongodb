@@ -32,7 +32,7 @@
 import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
-import contactsRouter from './routers/contacts.routers'; 
+import contactsRouter from './routes/contacts.routes'; 
 
 const app = express();
 
