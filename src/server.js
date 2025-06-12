@@ -1,20 +1,30 @@
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import morgan from "morgan";
 
-import express from 'express';
-import cors from 'cors';
-import pino from 'pino-http';
-import contactsRouter from './routes/contacts.routes.js';
+import contactsRouter from "./routers/contacts.js";
+import notFoundHandler from "./middlewares/notFoundHandler.js";
+import errorHandler from "./middlewares/errorHandler.js";
 
+dotenv.config();
 const app = express();
 
-app.use(cors());
-app.use(pino());
+app.use(morgan("dev"));
 app.use(express.json());
+app.use("/contacts", contactsRouter);
 
-app.use('/contacts', contactsRouter);
+app.use(notFoundHandler);
+app.use(errorHandler);
 
-app.use((req, res) => {
-  res.status(404).json({ message: 'Not found' });
-});
+const PORT = process.env.PORT || 3000;
 
-
-export default app;
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => {
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  })
+  .catch((err) => {
+    console.error("DB connection error:", err.message);
+    process.exit(1);
+  });
