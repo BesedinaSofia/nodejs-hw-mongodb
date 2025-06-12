@@ -1,13 +1,34 @@
-import express from "express";
-import * as contactsController from "../controllers/contacts.js";
-import ctrlWrapper from "../utils/ctrlWrapper.js";
+// import express from 'express';
+// import {
+//   handleGetContacts,
+//   handleGetContactById,
+// } from '../controllers/contacts.controller.js';
 
-const router = express.Router();
+// const router = express.Router();
 
-router.get("/", ctrlWrapper(contactsController.getAllContacts));
-router.get("/:contactId", ctrlWrapper(contactsController.getContactById));
-router.post("/", ctrlWrapper(contactsController.createContact));
-router.patch("/:contactId", ctrlWrapper(contactsController.updateContact));
-router.delete("/:contactId", ctrlWrapper(contactsController.deleteContact));
+// router.get('/', handleGetContacts);
+// router.get('/:contactId', handleGetContactById);
 
-export default router;
+// export default router;
+
+
+
+import express from 'express';
+import cors from 'cors';
+import pino from 'pino-http';
+import contactsRouter from './routes/contacts.routes.js';
+
+const app = express();
+
+app.use(cors());
+app.use(pino());
+app.use(express.json());
+
+app.use('/contacts', contactsRouter);
+
+app.use((req, res) => {
+  res.status(404).json({ message: 'Not found' });
+});
+
+
+export default app;
