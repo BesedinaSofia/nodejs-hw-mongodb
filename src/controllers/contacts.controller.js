@@ -1,3 +1,5 @@
+import * as contactsService from "../services/contacts.service.js";
+
 export const getAllContacts = async (req, res) => {
   const {
     page = 1,
