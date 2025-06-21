@@ -1,22 +1,37 @@
 import Contact from "../models/contact.model.js";
 
-export const listContacts = async () => {
-  return await Contact.find();
-};
+export const listContacts = async ({
+  page,
+  perPage,
+  sortBy,
+  sortOrder,
+  type,
+  isFavourite
+}) => {
+  const filter = {};
+  if (type) filter.contactType = type;
+  if (isFavourite !== undefined) {
+    filter.isFavourite = isFavourite === 'true';
+  }
 
-export const getContactById = async (id) => {
-  return await Contact.findById(id);
-};
+  const skip = (page - 1) * perPage;
+  const sort = { [sortBy]: sortOrder === 'desc' ? -1 : 1 };
 
-export const createContact = async (data) => {
-  return await Contact.create(data);
-};
+  const totalItems = await Contact.countDocuments(filter);
+  const totalPages = Math.ceil(totalItems / perPage);
 
-export const updateContact = async (id, data) => {
-  return await Contact.findByIdAndUpdate(id, data, { new: true });
-};
+  const contacts = await Contact.find(filter)
+    .sort(sort)
+    .skip(skip)
+    .limit(perPage);
 
-export const deleteContact = async (id) => {
-  const result = await Contact.findByIdAndDelete(id);
-  return result ? true : false;
+  return {
+    data: contacts,
+    page,
+    perPage,
+    totalItems,
+    totalPages,
+    hasPreviousPage: page > 1,
+    hasNextPage: page < totalPages
+  };
 };
