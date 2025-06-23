@@ -1,10 +1,11 @@
+import mongoose from 'mongoose';
 import Contact from "../models/contact.model.js";
 
 export const listContacts = async ({
-  page,
-  perPage,
-  sortBy,
-  sortOrder,
+  page = 1,
+  perPage = 10,
+  sortBy = 'name',
+  sortOrder = 'asc',
   type,
   isFavourite
 }) => {
@@ -34,4 +35,19 @@ export const listContacts = async ({
     hasPreviousPage: page > 1,
     hasNextPage: page < totalPages
   };
+};
+
+export const getContactById = async (id) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return null;
+  }
+  return await Contact.findById(id);
+};
+
+export const deleteContact = async (id) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return false;
+  }
+  const result = await Contact.findByIdAndDelete(id);
+  return result !== null;
 };
