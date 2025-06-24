@@ -52,49 +52,19 @@ export const deleteContact = async (id) => {
   return result !== null;
 };
 
+export const createContact = async (contactData) => {
+  const newContact = await Contact.create(contactData);
+  return newContact;
+};
 
-// import Contact from "../models/contact.model.js";
+export const updateContact = async (id, contactData) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return null;
+  }
+  const updatedContact = await Contact.findByIdAndUpdate(id, contactData, { new: true });
+  return updatedContact;
+};
 
-// export const listContacts = async ({
-//   page = 1,
-//   perPage = 10,
-//   sortBy = "name",
-//   sortOrder = "asc",
-//   type,
-//   isFavourite,
-// }) => {
-//   const pageNum = Number(page);
-//   const perPageNum = Number(perPage);
-//   const skip = (pageNum - 1) * perPageNum;
-
-//   const sort = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
-//   const filter = {};
-//   if (type) filter.contactType = type;
-//   if (isFavourite !== undefined) filter.isFavourite = isFavourite === "true";
-
-//   const [contacts, totalItems] = await Promise.all([
-//     Contact.find(filter).sort(sort).skip(skip).limit(perPageNum),
-//     Contact.countDocuments(filter),
-//   ]);
-
-//   return {
-//     data: contacts,
-//     page: pageNum,
-//     perPage: perPageNum,
-//     totalItems,
-//     totalPages: Math.ceil(totalItems / perPageNum),
-//     hasPreviousPage: pageNum > 1,
-//     hasNextPage: pageNum < Math.ceil(totalItems / perPageNum),
-//   };
-// };
-
-// export const getContactById = async (contactId) => {
-//   return await Contact.findById(contactId);
-// };
-
-// export const createContact = async (data) => {
-//   return await Contact.create(data);
-// };
 
 // export const updateContact = async (contactId, data) => {
 //   return await Contact.findByIdAndUpdate(contactId, data, {
