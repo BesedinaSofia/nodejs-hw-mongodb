@@ -51,15 +51,14 @@
 //   "object.min": "At least one field must be provided for update",
 // });
 
-
 import Joi from "joi";
 
-const contactTypeEnum = ["personal", "work"];
+const contactTypeEnum = ["work", "home","personal"]; 
 
 export const createContactSchema = Joi.object({
   name: Joi.string().min(3).max(20).required(),
   email: Joi.string().email().required(),
-  phone: Joi.string().min(5).max(20).required(),
+  phoneNumber: Joi.string().min(10).max(20).required(),
   contactType: Joi.string().valid(...contactTypeEnum).required(),
   isFavourite: Joi.boolean().optional()
 }).options({ abortEarly: false });
@@ -67,7 +66,7 @@ export const createContactSchema = Joi.object({
 export const updateContactSchema = Joi.object({
   name: Joi.string().min(3).max(20),
   email: Joi.string().email(),
-  phone: Joi.string().min(5).max(20),
+  phoneNumber: Joi.string().min(10).max(20),
   contactType: Joi.string().valid(...contactTypeEnum),
   isFavourite: Joi.boolean()
 })
