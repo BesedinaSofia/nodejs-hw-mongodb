@@ -1,16 +1,4 @@
-// import httpErrors from 'http-errors';
-// const { BadRequest } = httpErrors;
-
-// export const validateBody = (schema) => (req, res, next) => {
-//   const { error } = schema.validate(req.body);
-//   if (error) {
-//     next(BadRequest(error.message));
-//   } else {
-//     next();
-//   }
-// };
-
-export const validateBody = (schema) => {
+export const validateBody = (schema) => { 
   return (req, res, next) => {
     console.log("Validating body:", req.body);
     const { error } = schema.validate(req.body);
@@ -26,3 +14,4 @@ export const validateBody = (schema) => {
   };
 };
 
+export default validateBody;
