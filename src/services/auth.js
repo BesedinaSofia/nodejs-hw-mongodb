@@ -8,14 +8,16 @@ import { generateTokens } from '../utils/tokens.js';
 const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'access_secret';
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refresh_secret';
 
-const ACCESS_TOKEN_LIFE = '15m';
-const REFRESH_TOKEN_LIFE = '30d';
+console.log('JWT_ACCESS_SECRET:', JWT_ACCESS_SECRET); 
+console.log('JWT_REFRESH_SECRET:', JWT_REFRESH_SECRET); 
 
 export const findUserByEmail = async (email) => {
+  console.log('Finding user by email:', email); 
   return User.findOne({ email });
 };
 
 export const registerUser = async ({ name, email, password }) => {
+  console.log('Registering user:', { name, email }); 
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await User.create({ name, email, password: hashedPassword });
   const userObj = user.toObject();
@@ -25,19 +27,26 @@ export const registerUser = async ({ name, email, password }) => {
 
 export const login = async (user) => {
   try {
-    await Session.deleteMany({ userId: user._id });
-    const { accessToken, refreshToken, sessionId } = generateTokens(user._id);
+    console.log('Deleting old sessions for userId:', user._id);
+    const deleteResult = await Session.deleteMany({ userId: user._id });
+    console.log('Deleted sessions count:', deleteResult.deletedCount);
 
-    const session = await Session.create({
+    const { accessToken, refreshToken, sessionId } = generateTokens(user._id);
+    console.log('Generated tokens:', { accessToken, refreshToken, sessionId });
+
+    const sessionData = {
       userId: user._id,
       accessToken,
       refreshToken,
       sessionId,
       accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000),
       refreshTokenValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    });
+    };
+    console.log('Session data to create:', sessionData);
 
-    console.log('Login - New session created:', { sessionId: session._id, userId: user._id, refreshToken });
+    const session = await Session.create(sessionData);
+    console.log('Session created:', session);
+
     return { accessToken, refreshToken };
   } catch (error) {
     console.error('Login service error:', error);

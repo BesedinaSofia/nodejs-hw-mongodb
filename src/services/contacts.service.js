@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import Contact from "../models/contact.model.js";
 
 export const listContacts = async ({
+  userId,
   page = 1,
   perPage = 10,
   sortBy = 'name',
@@ -9,7 +10,7 @@ export const listContacts = async ({
   type,
   isFavourite
 }) => {
-  const filter = {};
+  const filter = { userId }; 
   if (type) filter.contactType = type;
   if (isFavourite !== undefined) {
     filter.isFavourite = isFavourite === 'true';
@@ -37,18 +38,18 @@ export const listContacts = async ({
   };
 };
 
-export const getContactById = async (id) => {
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+export const getContactById = async (contactId, userId) => {
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
     return null;
   }
-  return await Contact.findById(id);
+  return await Contact.findOne({ _id: contactId, userId });
 };
 
-export const deleteContact = async (id) => {
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+export const deleteContact = async (contactId, userId) => {
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
     return false;
   }
-  const result = await Contact.findByIdAndDelete(id);
+  const result = await Contact.findOneAndDelete({ _id: contactId, userId });
   return result !== null;
 };
 
@@ -57,22 +58,14 @@ export const createContact = async (contactData) => {
   return newContact;
 };
 
-export const updateContact = async (id, contactData) => {
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+export const updateContact = async (contactId, userId, contactData) => {
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
     return null;
   }
-  const updatedContact = await Contact.findByIdAndUpdate(id, contactData, { new: true });
+  const updatedContact = await Contact.findOneAndUpdate(
+    { _id: contactId, userId },
+    contactData,
+    { new: true, runValidators: true }
+  );
   return updatedContact;
 };
-
-
-// export const updateContact = async (contactId, data) => {
-//   return await Contact.findByIdAndUpdate(contactId, data, {
-//     new: true,
-//     runValidators: true,
-//   });
-// };
-
-// export const deleteContact = async (contactId) => {
-//   return await Contact.findByIdAndDelete(contactId);
-// };
