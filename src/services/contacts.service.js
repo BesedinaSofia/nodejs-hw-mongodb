@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import Contact from "../models/contact.model.js";
+import Contact from '../models/contact.model.js';
 
 export const listContacts = async ({
   userId,
@@ -8,9 +8,9 @@ export const listContacts = async ({
   sortBy = 'name',
   sortOrder = 'asc',
   type,
-  isFavourite
+  isFavourite,
 }) => {
-  const filter = { userId }; 
+  const filter = { userId };
   if (type) filter.contactType = type;
   if (isFavourite !== undefined) {
     filter.isFavourite = isFavourite === 'true';
@@ -34,7 +34,7 @@ export const listContacts = async ({
     totalItems,
     totalPages,
     hasPreviousPage: page > 1,
-    hasNextPage: page < totalPages
+    hasNextPage: page < totalPages,
   };
 };
 
@@ -62,9 +62,13 @@ export const updateContact = async (contactId, userId, contactData) => {
   if (!mongoose.Types.ObjectId.isValid(contactId)) {
     return null;
   }
+  
+  const cleanedData = Object.fromEntries(
+    Object.entries(contactData).filter(([_, value]) => value !== undefined)
+  );
   const updatedContact = await Contact.findOneAndUpdate(
     { _id: contactId, userId },
-    contactData,
+    cleanedData,
     { new: true, runValidators: true }
   );
   return updatedContact;
