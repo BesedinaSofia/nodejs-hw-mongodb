@@ -44,7 +44,7 @@ export const createContact = async (req, res) => {
   const contactData = {
     ...req.body,
     userId: req.user._id,
-    photo: req.file ? req.file.path : undefined, 
+    photo: req.file ? req.file.path : undefined,
   };
   const newContact = await contactsService.createContact(contactData);
 

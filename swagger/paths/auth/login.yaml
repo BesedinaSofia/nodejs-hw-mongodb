@@ -1,0 +1,21 @@
+# nodejs-hw-mongodb/swagger/paths/auth/login.yaml
+post:
+  tags:
+    - Auth
+  summary: User login
+  operationId: loginUser
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../../docs/openapi.yaml#/components/schemas/UserLogin' # Шлях виправлено
+  responses:
+    '200':
+      $ref: '../../../docs/openapi.yaml#/components/responses/LoginSuccessResponse' # Шлях виправлено
+    '400':
+      $ref: '../../../docs/openapi.yaml#/components/responses/BadRequestResponse' # Шлях виправлено
+    '401':
+      $ref: '../../../docs/openapi.yaml#/components/responses/UnauthorizedResponse' # Шлях виправлено
+    '500':
+      $ref: '../../../docs/openapi.yaml#/components/responses/InternalServerErrorResponse' # Шлях виправлено

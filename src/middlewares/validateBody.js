@@ -1,4 +1,4 @@
-export const validateBody = (schema) => { 
+export const validateBody = (schema) => {
   return (req, res, next) => {
     console.log("Validating body:", req.body);
     const { error } = schema.validate(req.body);

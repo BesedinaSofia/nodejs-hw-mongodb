@@ -1,0 +1,100 @@
+# # docs/paths/auth/reset-pwd.yaml
+# post:
+#   tags:
+#     - Auth
+#   summary: Reset password
+#   operationId: resetPassword
+#   description: Reset user's password using a valid reset token and a new password.
+#   requestBody:
+#     required: true
+#     content:
+#       application/json:
+#         schema:
+#           type: object
+#           properties:
+#             token:
+#               type: string
+#               description: The password reset token received via email.
+#               example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+#             password:
+#               type: string
+#               description: The new password for the user.
+#               example: NewStrongP@ssw0rd
+#           required:
+#             - token
+#             - password
+#   responses:
+#     '200':
+#       description: Password has been successfully reset.
+#       content:
+#         application/json:
+#           schema:
+#             type: object
+#             properties:
+#               status:
+#                 type: integer
+#                 example: 200
+#               message:
+#                 type: string
+#                 example: Password has been successfully reset.
+#               data:
+#                 type: object # Empty data object
+#     '401':
+#       description: Unauthorized (e.g., token expired or invalid)
+#       content:
+#         application/json:
+#           schema:
+#             $ref: '#/components/schemas/Error' # <-- ЗМІНЕНО
+#     '404':
+#       description: User not found
+#       content:
+#         application/json:
+#           schema:
+#             $ref: '#/components/schemas/Error' # <-- ЗМІНЕНО
+#     '500':
+#       description: Server error
+#       content:
+#         application/json:
+#           schema:
+#             $ref: '#/components/schemas/Error' # <-- ЗМІНЕНО
+
+# nodejs-hw-mongodb/swagger/paths/auth/reset-pwd.yaml
+post:
+  tags:
+    - Auth
+  summary: Reset user password
+  operationId: resetPassword
+  description: Reset a user's password using a valid reset token.
+  requestBody: # <-- Виправлений відступ!
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../../docs/openapi.yaml#/components/schemas/ResetPasswordRequest' # Шлях виправлено
+  responses:
+    '200':
+      $ref: '../../../docs/openapi.yaml#/components/responses/PasswordResetSuccessResponse' # Шлях виправлено
+    '400':
+      $ref: '../../../docs/openapi.yaml#/components/responses/BadRequestResponse' # Шлях виправлено
+    '401':
+      description: Token is expired or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '../../../docs/openapi.yaml#/components/schemas/Error' # Шлях виправлено
+            example:
+              status: 401
+              message: 'Unauthorized'
+              data: 'Token is expired or invalid.'
+    '404':
+      description: User not found
+      content:
+        application/json:
+          schema:
+            $ref: '../../../docs/openapi.yaml#/components/schemas/Error' # Шлях виправлено
+            example:
+              status: 404
+              message: 'Not Found'
+              data: 'User not found!'
+    '500':
+      $ref: '../../../docs/openapi.yaml#/components/responses/InternalServerErrorResponse' # Шлях виправлено

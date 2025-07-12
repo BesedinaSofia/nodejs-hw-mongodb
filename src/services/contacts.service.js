@@ -62,7 +62,7 @@ export const updateContact = async (contactId, userId, contactData) => {
   if (!mongoose.Types.ObjectId.isValid(contactId)) {
     return null;
   }
-  
+
   const cleanedData = Object.fromEntries(
     Object.entries(contactData).filter(([_, value]) => value !== undefined)
   );
