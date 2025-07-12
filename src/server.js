@@ -74,7 +74,8 @@ import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 
 
-import swaggerDocument from '../docs/swagger.json' with { type: 'json' }; 
+// import swaggerDocument from '../docs/swagger.json' with { type: 'json' }; 
+import swaggerDocument from '../docs/swagger.json' assert { type: 'json' };
 
 import contactsRouter from './routers/contacts.js';
 import authRouter from './routers/auth.js';
@@ -89,7 +90,7 @@ app.use(pino());
 app.use(express.json());
 app.use(cookieParser());
 
-// Add Swagger UI route
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/contacts', contactsRouter);
