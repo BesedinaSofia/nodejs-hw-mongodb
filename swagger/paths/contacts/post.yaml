@@ -62,3 +62,29 @@ responses:
               example: 'Contact created successfully'
             data:
               $ref: '../../../docs/openapi.yaml#/components/schemas/Contact'
+  '400':
+    description: Invalid input or missing required fields.
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: number
+              example: 400
+            message:
+              type: string
+              example: 'Bad Request: Invalid data provided or missing required fields'
+  '401':
+    description: Unauthorized - authentication token is missing or invalid.
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: number
+              example: 401
+            message:
+              type: string
+              example: 'Unauthorized: Access token is missing or invalid'
