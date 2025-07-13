@@ -1,4 +1,5 @@
 # nodejs-hw-mongodb/docs/openapi.yaml
+# nodejs-hw-mongodb/docs/openapi.yaml
 
 openapi: 3.0.0
 info:
@@ -20,12 +21,13 @@ paths:
     $ref: '../swagger/paths/contacts/_id/get.yaml'
   /contacts:
     $ref: '../swagger/paths/contacts/get.yaml'
+    post:
+      $ref: '../swagger/paths/contacts/post.yaml'
   /contacts/{contactId}/patch:
     $ref: '../swagger/paths/contacts/_id/patch.yaml'
   /contacts/{contactId}/delete:
     $ref: '../swagger/paths/contacts/_id/delete.yaml'
-  /contacts/post:
-    $ref: '../swagger/paths/contacts/post.yaml'
+  # Рядок /contacts/post: $ref: '../swagger/paths/contacts/post.yaml' ВИДАЛЕНО!
   /auth/register:
     $ref: '../swagger/paths/auth/register.yaml'
   /auth/login:
@@ -362,7 +364,7 @@ components:
 
     LogoutSuccessResponse:
       description: User logged out successfully (No Content)
-      content: {} # Для 204 No Content
+      content: {}
 
     ResetEmailSentResponse:
       description: Password reset email sent
