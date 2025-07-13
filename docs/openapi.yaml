@@ -9,9 +9,9 @@ info:
     name: MIT
     url: https://opensource.org/licenses/MIT
 servers:
-  - url: http://localhost:3000/api
+  - url: http://localhost:3000
     description: Local development server
-  - url: https://your-render-app.onrender.com/api # Оновіть на свою URL Render.com
+  - url: https://nodejs-hw-mongodb-wjqd.onrender.com
     description: Production server on Render.com
 tags:
   - name: Auth
