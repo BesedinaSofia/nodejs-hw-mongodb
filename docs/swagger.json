@@ -334,108 +334,123 @@
     },
     "/contacts/{contactId}/patch": {
       "patch": {
-        "tags": [
-          "Contacts"
-        ],
-        "summary": "Update a contact by ID",
-        "operationId": "updateContact",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "contactId",
-            "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "description": "ID of the contact to update",
-            "example": "60d5ec49f8a3c9001c9b4d8a"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "minLength": 3,
-                    "maxLength": 20,
-                    "example": "Jane Doe"
-                  },
-                  "phoneNumber": {
-                    "type": "string",
-                    "minLength": 5,
-                    "maxLength": 20,
-                    "example": "+380671234567"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "jane.doe@example.com"
-                  },
-                  "contactType": {
-                    "type": "string",
-                    "enum": [
-                      "personal",
-                      "work",
-                      "home"
-                    ],
-                    "example": "work"
-                  },
-                  "isFavourite": {
-                    "type": "boolean",
-                    "example": false
-                  }
-                },
-                "minProperties": 1,
-                "description": "Fields to update for the contact. At least one field must be provided."
+    "tags": [
+      "Contacts"
+    ],
+    "summary": "Update a contact by ID",
+    "operationId": "updateContact",
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ],
+    "parameters": [
+      {
+        "in": "path",
+        "name": "contactId",
+        "schema": {
+          "type": "string"
+        },
+        "required": true,
+        "description": "ID of the contact to update",
+        "example": "60d5ec49f8a3c9001c9b4d8a"
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "multipart/form-data": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 20,
+                "description": "Name of the contact.",
+                "example": "Jane Doe"
               },
-              "examples": {
-                "updateName": {
-                  "value": {
-                    "name": "Jane Doe"
-                  }
-                },
-                "updatePhone": {
-                  "value": {
-                    "phoneNumber": "+380501112233"
-                  }
-                },
-                "updateFavorite": {
-                  "value": {
-                    "isFavourite": true
-                  }
-                }
+              "phoneNumber": {
+                "type": "string",
+                "minLength": 5,
+                "maxLength": 20,
+                "description": "Phone number of the contact.",
+                "example": "+380671234567"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "description": "Email of the contact.",
+                "example": "jane.doe@example.com"
+              },
+              "contactType": {
+                "type": "string",
+                "enum": [
+                  "personal",
+                  "work",
+                  "home"
+                ],
+                "description": "Type of contact.",
+                "example": "work"
+              },
+              "isFavourite": {
+                "type": "boolean",
+                "description": "Whether the contact is a favorite.",
+                "example": false
+              },
+              "photo": {
+                "type": "string",
+                "format": "binary",
+                "description": "Optional photo file for the contact."
+              }
+            },
+            "minProperties": 1,
+            "description": "Fields to update for the contact. At least one field must be provided."
+          },
+          "examples": {
+            "updateName": {
+              "value": {
+                "name": "Jane Doe"
+              }
+            },
+            "updatePhone": {
+              "value": {
+                "phoneNumber": "+380501112233"
+              }
+            },
+            "updateFavorite": {
+              "value": {
+                "isFavourite": true
+              }
+            },
+            "updatePhoto": {
+              "value": {
+                "photo": "binary file"
               }
             }
-          }
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/SuccessContactResponse"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequestResponse"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedResponse"
-          },
-          "404": {
-            "$ref": "#/components/responses/ContactNotFoundResponse"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerErrorResponse"
           }
         }
       }
     },
+    "responses": {
+      "200": {
+        "$ref": "#/components/responses/SuccessContactResponse"
+      },
+      "400": {
+        "$ref": "#/components/responses/BadRequestResponse"
+      },
+      "401": {
+        "$ref": "#/components/responses/UnauthorizedResponse"
+      },
+      "404": {
+        "$ref": "#/components/responses/ContactNotFoundResponse"
+      },
+      "500": {
+        "$ref": "#/components/responses/InternalServerErrorResponse"
+      }
+    }
+  }
+},
     "/contacts/{contactId}/delete": {
       "delete": {
         "tags": [
