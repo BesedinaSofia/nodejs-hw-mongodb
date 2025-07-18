@@ -22,6 +22,12 @@ patch:
         schema:
           type: object
           properties:
+            name:
+              type: string
+              minLength: 3
+              maxLength: 20
+              description: Name of the contact.
+              example: Jane Doe
             phoneNumber:
               type: string
               minLength: 5
@@ -45,6 +51,9 @@ patch:
           minProperties: 1
           description: Fields to update for the contact. At least one field must be provided.
         examples:
+          updateName:
+            value:
+              name: Jane Doe
           updatePhone:
             value:
               phoneNumber: '+380501112233'

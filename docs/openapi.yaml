@@ -1,5 +1,3 @@
-# nodejs-hw-mongodb/docs/openapi.yaml
-
 openapi: 3.0.0
 info:
   title: Your Project API
@@ -9,7 +7,7 @@ info:
     name: MIT
     url: https://opensource.org/licenses/MIT
 servers:
-  - url: http://localhost:3000
+  - url: http://localhost:3000 # Для локального тестування, не для продакшену
     description: Local development server
   - url: https://nodejs-hw-mongodb-wjqd.onrender.com
     description: Production server on Render.com
@@ -19,28 +17,306 @@ tags:
   - name: Contacts
     description: Contact management operations
 paths:
-  /contacts/{contactId}:
-    $ref: '../swagger/paths/contacts/_id/get.yaml'
   /contacts:
-    $ref: '../swagger/paths/contacts/get.yaml'
+    get:
+      tags:
+        - Contacts
+      summary: Get a list of contacts
+      operationId: getContacts
+      security:
+        - bearerAuth: [] # Вимагає авторизації
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+          example: 1
+        - in: query
+          name: perPage
+          schema:
+            type: integer
+            default: 10
+          description: Items per page
+          example: 10
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessContactsListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
     post:
-      $ref: '../swagger/paths/contacts/post.yaml'
-  /contacts/{contactId}/patch:
-    $ref: '../swagger/paths/contacts/_id/patch.yaml'
-  /contacts/{contactId}/delete:
-    $ref: '../swagger/paths/contacts/_id/delete.yaml'
+      tags:
+        - Contacts
+      summary: Create a new contact
+      operationId: createContact
+      security:
+        - bearerAuth: [] # Вимагає авторизації
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contact'
+      responses:
+        '201':
+          $ref: '#/components/responses/SuccessContactResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /contacts/{contactId}:
+    get:
+      tags:
+        - Contacts
+      summary: Get a contact by ID
+      operationId: getContactById
+      security:
+        - bearerAuth: [] # Вимагає авторизації
+      parameters:
+        - in: path
+          name: contactId
+          schema:
+            type: string
+            pattern: '^[0-9a-fA-F]{24}$'
+          required: true
+          description: ID of the contact to retrieve
+          example: 60d5ec49f8a3c9001c9b4d8a
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessContactResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          $ref: '#/components/responses/ContactNotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    patch:
+      tags:
+        - Contacts
+      summary: Update a contact by ID
+      operationId: updateContact
+      security:
+        - bearerAuth: [] # Вимагає авторизації
+      parameters:
+        - in: path
+          name: contactId
+          schema:
+            type: string
+            pattern: '^[0-9a-fA-F]{24}$'
+          required: true
+          description: ID of the contact to update
+          example: 60d5ec49f8a3c9001c9b4d8a
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 3
+                  maxLength: 20
+                  description: Name of the contact.
+                  example: Jane Doe
+                phoneNumber:
+                  type: string
+                  minLength: 5
+                  maxLength: 20
+                  example: '+380671234567'
+                email:
+                  type: string
+                  format: email
+                  example: jane.doe@example.com
+                contactType:
+                  type: string
+                  enum: [personal, work, home]
+                  example: work
+                isFavourite:
+                  type: boolean
+                  example: false
+                photo:
+                  type: string
+                  format: binary
+                  description: Optional photo file for the contact.
+              minProperties: 1
+              description: Fields to update for the contact. At least one field must be provided.
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessContactResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          $ref: '#/components/responses/ContactNotFoundResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    delete:
+      tags:
+        - Contacts
+      summary: Delete a contact by ID
+      operationId: deleteContact
+      security:
+        - bearerAuth: [] # Вимагає авторизації
+      parameters:
+        - in: path
+          name: contactId
+          schema:
+            type: string
+            pattern: '^[0-9a-fA-F]{24}$'
+          required: true
+          description: ID of the contact to delete
+          example: 60d5ec49f8a3c9001c9b4d8a
+      responses:
+        '204':
+          description: No content, contact successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 204
+                  message:
+                    type: string
+                    example: 'Contact deleted successfully'
+                  data:
+                    type: object
+                    nullable: true
+                    example: null
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          $ref: '#/components/responses/ContactNotFoundResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
   /auth/register:
-    $ref: '../swagger/paths/auth/register.yaml'
+    post:
+      tags:
+        - Auth
+      summary: Register a new user
+      operationId: registerUser
+      # Відкритий ендпоінт, авторизація не потрібна
+      security: [] # Порожня секція безпеки для відповідності правилу
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+      responses:
+        '201':
+          $ref: '#/components/responses/SuccessfullyRegisteredResponse'
+        '409':
+          $ref: '#/components/responses/ConflictResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
   /auth/login:
-    $ref: '../swagger/paths/auth/login.yaml'
+    post:
+      tags:
+        - Auth
+      summary: Log in a user
+      operationId: loginUser
+      # Відкритий ендпоінт, авторизація не потрібна
+      security: [] # Порожня секція безпеки для відповідності правилу
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          $ref: '#/components/responses/LoginSuccessResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
   /auth/refresh:
-    $ref: '../swagger/paths/auth/refresh.yaml'
+    post:
+      tags:
+        - Auth
+      summary: Refresh user token
+      operationId: refreshToken
+      security:
+        - bearerAuth: [] # Вимагає авторизації
+      responses:
+        '200':
+          $ref: '#/components/responses/RefreshSuccessResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
   /auth/logout:
-    $ref: '../swagger/paths/auth/logout.yaml'
+    post:
+      tags:
+        - Auth
+      summary: Log out a user
+      operationId: logoutUser
+      security:
+        - bearerAuth: [] # Вимагає авторизації
+      responses:
+        '204':
+          $ref: '#/components/responses/LogoutSuccessResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
   /auth/send-reset-email:
-    $ref: '../swagger/paths/auth/send-reset-email.yaml'
+    post:
+      tags:
+        - Auth
+      summary: Send password reset email
+      operationId: sendResetEmail
+      # Відкритий ендпоінт, авторизація не потрібна
+      security: [] # Порожня секція безпеки для відповідності правилу
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendResetEmailRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/ResetEmailSentResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
   /auth/reset-pwd:
-    $ref: '../swagger/paths/auth/reset-pwd.yaml'
+    post:
+      tags:
+        - Auth
+      summary: Reset user password
+      operationId: resetPassword
+      # Відкритий ендпоінт, авторизація не потрібна
+      security: [] # Порожня секція безпеки для відповідності правилу
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/PasswordResetSuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
 
 components:
   securitySchemes:
@@ -48,7 +324,6 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-
   schemas:
     Contact:
       type: object
@@ -91,7 +366,6 @@ components:
           type: string
           description: The ID of the user who owns this contact.
           example: 60d5ec49f8a3c9001c9b4d8c
-
     User:
       type: object
       properties:
@@ -124,7 +398,6 @@ components:
           type: string
           format: date-time
           example: '2023-10-26T10:00:00Z'
-
     UserRegister:
       type: object
       required:
@@ -143,7 +416,6 @@ components:
           type: string
           format: password
           example: 'strongpassword123'
-
     UserLogin:
       type: object
       required:
@@ -158,7 +430,6 @@ components:
           type: string
           format: password
           example: 'strongpassword123'
-
     SendResetEmailRequest:
       type: object
       required:
@@ -168,7 +439,6 @@ components:
           type: string
           format: email
           example: user@example.com
-
     ResetPasswordRequest:
       type: object
       required:
@@ -183,7 +453,6 @@ components:
           type: string
           description: Password reset token received via email.
           example: 'somerandomtokenstring'
-
     Error:
       type: object
       properties:
@@ -197,7 +466,6 @@ components:
           type: string
           nullable: true
           example: null
-
   responses:
     SuccessContactResponse:
       description: Contact retrieved successfully
@@ -214,7 +482,6 @@ components:
                 example: 'Successfully found contact by id!'
               data:
                 $ref: '#/components/schemas/Contact'
-
     SuccessContactsListResponse:
       description: A list of contacts.
       content:
@@ -247,7 +514,6 @@ components:
                   totalPages:
                     type: integer
                     example: 3
-
     UnauthorizedResponse:
       description: Unauthorized
       content:
@@ -258,7 +524,6 @@ components:
               status: 401
               message: 'Unauthorized'
               data: 'Not authorized'
-
     ContactNotFoundResponse:
       description: Contact not found
       content:
@@ -269,7 +534,6 @@ components:
               status: 404
               message: 'Not found'
               data: 'Contact not found'
-
     BadRequestResponse:
       description: Bad Request
       content:
@@ -280,7 +544,6 @@ components:
               status: 400
               message: 'Bad Request'
               data: 'Validation error'
-
     InternalServerErrorResponse:
       description: Internal Server Error
       content:
@@ -291,7 +554,6 @@ components:
               status: 500
               message: 'Internal Server Error'
               data: null
-
     SuccessfullyRegisteredResponse:
       description: User registered successfully
       content:
@@ -307,7 +569,6 @@ components:
                 example: 'User created successfully!'
               data:
                 $ref: '#/components/schemas/User'
-
     ConflictResponse:
       description: Conflict
       content:
@@ -318,7 +579,6 @@ components:
               status: 409
               message: 'Conflict'
               data: 'Email is already in use'
-
     LoginSuccessResponse:
       description: User logged in successfully
       content:
@@ -340,7 +600,6 @@ components:
                     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
                   user:
                     $ref: '#/components/schemas/User'
-
     RefreshSuccessResponse:
       description: Token refreshed successfully
       content:
@@ -362,11 +621,9 @@ components:
                     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
                   user:
                     $ref: '#/components/schemas/User'
-
     LogoutSuccessResponse:
       description: User logged out successfully (No Content)
       content: {}
-
     ResetEmailSentResponse:
       description: Password reset email sent
       content:
@@ -384,7 +641,6 @@ components:
                 type: object
                 nullable: true
                 example: null
-
     PasswordResetSuccessResponse:
       description: Password reset successfully
       content:
